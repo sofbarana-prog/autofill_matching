@@ -1,0 +1,26 @@
+name: Test Commit Push
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create dummy file
+        run: echo "test $(date -u +%Y-%m-%dT%H:%M:%S)" > test_push.txt
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          git add test_push.txt
+          git commit -m "test: verify commit-push works [$(date -u +%Y-%m-%d)]"
+          git push
